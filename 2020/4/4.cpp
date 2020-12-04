@@ -25,7 +25,6 @@ const std::vector<string> eyeColors{"amb",
                                     "grn",
                                     "hzl",
                                     "oth"};
-
 bool isNumber(const std::string& s)
 {
     std::string::const_iterator it = s.begin();
@@ -42,15 +41,12 @@ bool yearValidator(std::string& value, int min, int max) {
     return true;
 }
 
-bool heightValidator(std::string& value) {
-     if (value.size() == 0) return false;
+bool heightValidator(std::string& value, const std::string& unit, int min, int max) {
+    if (value.size() == 0) return false;
     std::string::size_type pos;
-    if (value.find("cm") != std::string::npos) {
-        std::string height = value.substr(0, value.find("cm"));
-        return isNumber(height) && (std::stoi(height) > 150 && std::stoi(height) < 193);
-    } else if (value.find("in") != std::string::npos) {
-        std::string height = value.substr(0, value.find("in"));
-        return isNumber(height) && (std::stoi(height) > 59 && std::stoi(height) < 76);
+    if (value.find(unit) != std::string::npos) {
+        std::string height = value.substr(0, value.find(unit));
+        return isNumber(height) && (std::stoi(height) >= min && std::stoi(height) <= max);
     } else {
         return false;
     }
@@ -105,7 +101,7 @@ bool propertyValidator(std::string property, std::string value) {
     } else if (property == "eyr") {
         return yearValidator(value, 2020, 2030);
     } else if (property == "hgt") {
-        return heightValidator(value);
+        return (heightValidator(value, "cm", 150, 193) || heightValidator(value, "in", 59, 76));
     } else if (property == "hcl") {
         return hairColorValidator(value);
     } else if (property == "ecl") {
