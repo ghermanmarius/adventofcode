@@ -8,7 +8,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/2020/5/5.exe",
+            "program": "${workspaceFolder}/2020/6/6.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
