@@ -40,6 +40,7 @@
         "xutility": "cpp",
         "map": "cpp",
         "xtree": "cpp",
-        "cctype": "cpp"
+        "cctype": "cpp",
+        "algorithm": "cpp"
     }
 }
