@@ -12,6 +12,7 @@ class Bag {
     std::tuple<std::string, std::string> colors;
     std::vector<std::tuple<int, std::string, std::string>> unparsedContents;
     std::vector<std::tuple<int, Bag*>> contents;
+    bool hasGoldShiny;
 
     public:
     void ParseContents(std::vector<Bag*> bags) {
@@ -92,13 +93,19 @@ class Bag {
 
 void dfs1(Bag* bag, std::map<Bag*, bool>& visited, bool& found){
     visited[bag] = true;
+    if (bag->hasGoldShiny) {
+        found = true;
+        return;
+    }
+
     if (std::get<0>(bag->colors) == "shiny" &&
         std::get<1>(bag->colors) == "gold") {
             found = true;
+            bag->hasGoldShiny = true;
             return;
         }
-    for (int i = 0; i < bag->contents.size(); ++i) {
-        
+
+    for (int i = 0; i < bag->contents.size() && !found; ++i) {
         if (!visited[std::get<1>(bag->contents[i])]) {
             dfs1(std::get<1>(bag->contents[i]), visited, found);
         }
@@ -115,22 +122,27 @@ void dfs2(Bag* bag, std::map<Bag*, bool>& visited, int& sum){
     }
 }
 
-int computeCost(Bag* bag) {
+int computeCost(Bag* bag, std::map<Bag*, int>& costs) {
+    if (costs.find(bag) != costs.end()) {
+        return costs[bag];
+    }
     int sum = 1;
-    if (bag->contents.size() == 0) return 1;
     for (int i = 0; i < bag->contents.size(); ++i) {
-        sum += std::get<0>(bag->contents[i]) * computeCost(std::get<1>(bag->contents[i]));
+        sum += std::get<0>(bag->contents[i]) * computeCost(std::get<1>(bag->contents[i]), costs);
     } 
+    costs.insert(std::pair<Bag*, int>(bag, sum));
     return sum;
 }
 
 bool searchForColor(Bag* startPoint, std::vector<Bag*> bags) {
+    if (startPoint->hasGoldShiny) return true;
     std::map<Bag*, bool> visited;
     bool found = false;
     for (int i = 0; i < bags.size(); ++i) {
         visited.insert(std::pair<Bag*, bool>(bags[i], false));
     } 
     dfs1(startPoint, visited, found);
+    startPoint->hasGoldShiny = found;
     return found;
 }
 
@@ -143,6 +155,7 @@ int main() {
 
     while (std::getline(input, currentLine)) {
         Bag* currentBag = new Bag();
+        currentBag->hasGoldShiny = false;
         currentBag->Parse(currentLine);
         bags.push_back(currentBag);
     }
@@ -150,12 +163,14 @@ int main() {
     for (int i = 0; i < bags.size(); ++i) {
         bags[i]->ParseContents(bags);
     }
+
+    std::map<Bag*, int> costs;
     int result = 0;
     for (int i = 0; i < bags.size(); ++i) {
         result += searchForColor(bags[i], bags);
         if (std::get<0>(bags[i]->colors) == "shiny" &&
             std::get<1>(bags[i]->colors) == "gold") {
-            std::cout << computeCost(bags[i]) - 1 << std::endl;
+            std::cout << computeCost(bags[i], costs) - 1 << std::endl;
         }
     }
     std::cout << result - 1;
