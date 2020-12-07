@@ -91,7 +91,7 @@ class Bag {
     }
 };
 
-void dfs1(Bag* bag, std::map<Bag*, bool>& visited, bool& found){
+void dfs(Bag* bag, std::map<Bag*, bool>& visited, bool& found){
     visited[bag] = true;
     if (bag->hasGoldShiny) {
         found = true;
@@ -107,17 +107,7 @@ void dfs1(Bag* bag, std::map<Bag*, bool>& visited, bool& found){
 
     for (int i = 0; i < bag->contents.size() && !found; ++i) {
         if (!visited[std::get<1>(bag->contents[i])]) {
-            dfs1(std::get<1>(bag->contents[i]), visited, found);
-        }
-    }
-}
-
-void dfs2(Bag* bag, std::map<Bag*, bool>& visited, int& sum){
-    visited[bag] = true;
-    sum += 1;
-    for (int i = 0; i < bag->contents.size(); ++i) {
-        if (!visited[std::get<1>(bag->contents[i])]) {
-            dfs2(std::get<1>(bag->contents[i]), visited, sum);
+            dfs(std::get<1>(bag->contents[i]), visited, found);
         }
     }
 }
@@ -141,7 +131,7 @@ bool searchForColor(Bag* startPoint, std::vector<Bag*> bags) {
     for (int i = 0; i < bags.size(); ++i) {
         visited.insert(std::pair<Bag*, bool>(bags[i], false));
     } 
-    dfs1(startPoint, visited, found);
+    dfs(startPoint, visited, found);
     startPoint->hasGoldShiny = found;
     return found;
 }
