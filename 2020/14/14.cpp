@@ -52,7 +52,6 @@ void GetAffectedAdresses(size_t address, std::vector<size_t> fluctuating, std::v
     }
 }
 
-
 void process2(std::map<size_t, size_t>& data, const std::vector<std::pair<size_t, size_t>>& overrides, const std::vector<size_t>& fluctuating, const std::vector<std::pair<size_t, size_t>>& mem)
 {
     if (mem.size() == 0) return ;
